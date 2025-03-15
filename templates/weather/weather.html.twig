@@ -1,0 +1,182 @@
+{% extends 'index.html.twig' %}
+
+{% block centent %}
+
+
+	<div class="border-2  rounded-lg border-gray-300 dark:border-gray-600 mb-4">
+
+		<h1 class="text-3xl font-bold text-left mb-6 text-white">Weather Forecast</h1>
+
+		<!-- Search Form -->
+		<div class="max-w-md mx-auto mb-8">
+			<form method="get" action="{{ path('app_weather') }}" class="space-y-4">
+				<div>
+					<label for="city" class="block mb-2 text-sm font-medium text-gray-900">City</label>
+					<input type="text" id="city" name="city" value="{{ cityName }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter city name" required>
+				</div>
+				<div>
+					<label for="date" class="block mb-2 text-sm font-medium text-gray-900">Date</label>
+					<input type="date" id="date" name="date" value="{{ date }}" min="{{ "now"|date("Y-m-d") }}" max="{{ "now"|date_modify("+14 days")|date("Y-m-d") }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+				</div>
+				<button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Get Weather</button>
+			</form>
+
+			{% if error %}
+				<div class="p-4 mt-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+					{{ error }}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+	{% if weatherData %}
+
+		<div class="border-2  rounded-lg border-gray-300 dark:border-gray-600  mb-4">
+
+			<!-- Weather Header -->
+				<div class="p-5"> <div class="flex justify-between items-center mt-6">
+					<!-- Weather Icon -->
+                    <div class="flex gap-8">
+					<div class="w-20 h-20 relative">
+						<img src="{{ asset(weatherData.weatherIconPath) }}" alt="{{ weatherData.weatherDescription }}" class="w-full h-full object-contain">
+					</div>
+                    <div>
+						<div class="text-6xl font-semibold text-white">{{ weatherData.cityName }}</div>
+                        <div class="text-6xl font-light text-white">{{ weatherData.maxTemperature }}°C</div>
+					</div>
+                    </div>
+
+					<div class="text-right text-white text-2xl">
+						<div class="">{{ weatherData.weatherDescription }}</div>
+						<div>H:{{ weatherData.maxTemperature }}° L:{{ weatherData.minTemperature }}°</div>
+						<div class="text-sm text-gray-300">Feels like
+							{{ weatherData.maxTemperature }}°</div>
+					</div>
+				</div>
+
+			</div>
+
+
+			<!-- Weather Details Grid -->
+			<div
+				class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-2 p-2">
+				<!-- UV Index -->
+				<div class="flex flex-col items-center p-3 bg-gray-800 rounded-lg">
+					<span class="text-gray-400 text-xs mb-1">UV INDEX</span>
+					<span class="text-white text-xl font-medium">{{ weatherData.uvIndex }}</span>
+					<span class="text-gray-300 text-xs">{{ weatherData.uvDescription }}</span>
+					<div class="w-full h-1.5 mt-2 bg-gray-700 rounded-full flex overflow-hidden">
+						<div class="bg-green-500 h-full" style="width: 20%"></div>
+						<div class="bg-yellow-400 h-full" style="width: 20%"></div>
+						<div class="bg-orange-500 h-full" style="width: 20%"></div>
+						<div class="bg-red-500 h-full" style="width: 20%"></div>
+						<div class="bg-purple-600 h-full" style="width: 20%"></div>
+					</div>
+				</div>
+
+				<!-- Precipitation -->
+				<div class="flex flex-col items-center p-3 bg-gray-800 rounded-lg">
+					<span class="text-gray-400 text-xs mb-1">PRECIPITATION</span>
+					<span class="text-white text-xl font-medium">{{ weatherData.precipitation }}
+						mm</span>
+					<span class="text-gray-300 text-xs">Next expected: 1h</span>
+				</div>
+
+				<!-- Sunset -->
+				<div class="flex flex-col items-center p-3 bg-gray-800 rounded-lg">
+					<span class="text-gray-400 text-xs mb-1">SUNSET</span>
+					<span class="text-white text-xl font-medium">21:05</span>
+					<div class="w-full h-6 mt-1">
+						<svg viewbox="0 0 100 40" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+							<path d="M0,40 Q50,0 100,40" stroke="white" stroke-width="1" fill="none"/>
+							<circle cx="70" cy="28" r="3" fill="white"/>
+						</svg>
+					</div>
+				</div>
+
+				<!-- Humidity -->
+				<div class="flex flex-col items-center p-3 bg-gray-800 rounded-lg">
+					<span class="text-gray-400 text-xs mb-1">HUMIDITY</span>
+					<span class="text-white text-xl font-medium">38%</span>
+					<span class="text-gray-300 text-xs">The dew point is 10°</span>
+				</div>
+
+
+				<!-- Wind Speed -->
+				<div class="flex flex-col items-center p-3 bg-gray-800 rounded-lg">
+					<span class="text-gray-400 text-xs mb-1">WIND</span>
+					<span class="text-white text-xl font-medium">12 km/h</span>
+					<div class="w-10 h-10 mt-1">
+						<svg viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+							<path d="M12 5v14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M19 12l-7-7-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="border-2  rounded-lg border-gray-300 dark:border-gray-600 mb-4">
+
+
+			<!-- Forecast for Next Hours -->
+				<h3 class="text-gray-400 text-sm p-3">DAILY FORECAST</h3>
+				<div class="flex overflow-x-auto pb-3">
+					<div class="flex-shrink-0 w-20 flex flex-col items-center p-3">
+						<span class="text-white text-xs">Now</span>
+						<div class="w-8 h-8 my-2">
+							<svg class="w-full h-full text-yellow-300" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+								<path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2a7 7 0 1 1 0-14 7 7 0 0 1 0 14zM11 3v2h2V3h-2zm0 16v2h2v-2h-2zM3 11v2h2v-2H3zm16 0v2h2v-2h-2z"/>
+							</svg>
+						</div>
+						<span class="text-white font-medium">{{ weatherData.maxTemperature }}°</span>
+					</div>
+
+					<div class="flex-shrink-0 w-20 flex flex-col items-center p-3">
+						<span class="text-white text-xs">12 PM</span>
+						<div class="w-8 h-8 my-2">
+							<svg class="w-full h-full text-yellow-300" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+								<path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2a7 7 0 1 1 0-14 7 7 0 0 1 0 14zM11 3v2h2V3h-2zm0 16v2h2v-2h-2zM3 11v2h2v-2H3zm16 0v2h2v-2h-2z"/>
+							</svg>
+						</div>
+						<span class="text-white font-medium">{{ weatherData.maxTemperature }}°</span>
+					</div>
+
+					<div class="flex-shrink-0 w-20 flex flex-col items-center p-3">
+						<span class="text-white text-xs">1 PM</span>
+						<div class="w-8 h-8 my-2">
+							<svg class="w-full h-full text-gray-300" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+								<path d="M4.5 10H4c-1.103 0-2 .897-2 2s.897 2 2 2h.5c1.103 0 2-.897 2-2s-.897-2-2-2zm15 0h-.5c-1.103 0-2 .897-2 2s.897 2 2 2h.5c1.103 0 2-.897 2-2s-.897-2-2-2zm-10 0c-1.657 0-3 1.343-3 3s1.343 3 3 3h6c1.657 0 3-1.343 3-3s-1.343-3-3-3H9.5z"/>
+							</svg>
+						</div>
+						<span class="text-white font-medium">{{ weatherData.maxTemperature - 1 }}°</span>
+					</div>
+
+					<div class="flex-shrink-0 w-20 flex flex-col items-center p-3">
+						<span class="text-white text-xs">2 PM</span>
+						<div class="w-8 h-8 my-2">
+							<svg class="w-full h-full text-gray-300" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+								<path d="M4.5 10H4c-1.103 0-2 .897-2 2s.897 2 2 2h.5c1.103 0 2-.897 2-2s-.897-2-2-2zm15 0h-.5c-1.103 0-2 .897-2 2s.897 2 2 2h.5c1.103 0 2-.897 2-2s-.897-2-2-2zm-10 0c-1.657 0-3 1.343-3 3s1.343 3 3 3h6c1.657 0 3-1.343 3-3s-1.343-3-3-3H9.5z"/>
+							</svg>
+						</div>
+						<span class="text-white font-medium">{{ weatherData.maxTemperature - 2 }}°</span>
+					</div>
+
+					<div class="flex-shrink-0 w-20 flex flex-col items-center p-3">
+						<span class="text-white text-xs">3 PM</span>
+						<div class="w-8 h-8 my-2">
+							<svg class="w-full h-full text-gray-300" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+								<path d="M4.5 10H4c-1.103 0-2 .897-2 2s.897 2 2 2h.5c1.103 0 2-.897 2-2s-.897-2-2-2zm15 0h-.5c-1.103 0-2 .897-2 2s.897 2 2 2h.5c1.103 0 2-.897 2-2s-.897-2-2-2zm-10 0c-1.657 0-3 1.343-3 3s1.343 3 3 3h6c1.657 0 3-1.343 3-3s-1.343-3-3-3H9.5z"/>
+							</svg>
+						</div>
+						<span class="text-white font-medium">{{ weatherData.maxTemperature - 1 }}°</span>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	{% endif %}
+
+{% endblock %}
