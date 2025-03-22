@@ -30,6 +30,9 @@ class Agent
     #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $activeStatus = null;
 
+
+
+
     public function getId(): ?int
     {
         return $this->id;

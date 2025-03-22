@@ -1,19 +1,22 @@
 <?php
-
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user")]
-class User
+class User implements UserInterface , PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "bigint")]
     private ?int $id = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $resetToken = null;
 
     #[ORM\Column(type: "string", length: 100, unique: true)]
     private ?string $username = null;
@@ -21,18 +24,37 @@ class User
     #[ORM\Column(type: "string", length: 255)]
     private ?string $password = null;
 
-    #[ORM\ManyToOne(targetEntity: Citizen::class)]
+    #[ORM\OneToOne(targetEntity: Citizen::class)]
     #[ORM\JoinColumn(name: "citizen_id", referencedColumnName: "id")]
     private ?Citizen $citizen = null;
 
-    #[ORM\ManyToOne(targetEntity: Admin::class)]
+    #[ORM\OneToOne(targetEntity: Admin::class)]
     #[ORM\JoinColumn(name: "admin_id", referencedColumnName: "id")]
     private ?Admin $admin = null;
 
-    #[ORM\ManyToOne(targetEntity: Agent::class)]
+    #[ORM\OneToOne(targetEntity: Agent::class)]
     #[ORM\JoinColumn(name: "agent_id", referencedColumnName: "id")]
     private ?Agent $agent = null;
 
+    
+
+
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+        return $this;
+    }
+    
+    public function getUserIdentifier(): string
+{
+    return $this->username;
+}
     public function getId(): ?int
     {
         return $this->id;
@@ -91,5 +113,28 @@ class User
     {
         $this->agent = $agent;
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+       if ($this->admin != null ) {
+           return ['ROLE_ADMIN'];
+       } else if ($this->agent  != null){
+    return ['ROLE_AGENT'];
+    }
+       else if ($this-> citizen  != null){
+           return ['ROLE_CITIZEN'];
+       }
+       else return ['ROLE_USER'];
+    }
+
+    public function getSalt()
+    {
+        return null; // Not needed when using modern hashing algorithms
+    }
+
+    public function eraseCredentials()
+    {
+        // If you store any temporary data, such as plain-password, clear it here
     }
 }
