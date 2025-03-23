@@ -95,7 +95,7 @@ final class ReportController extends AbstractController{
     }
 
     #[Route('/reports/kanban', name: 'reports_kanban')]
-    public function kanban(ReportRepository $reportRepository): Response
+    public function kanbanView(ReportRepository $reportRepository): Response
     {
         // Get reports grouped by status
         $pendingReports = $reportRepository->findBy(['responseStatus' => 'PENDING']);
@@ -110,8 +110,6 @@ final class ReportController extends AbstractController{
             'closedReports' => $closedReports,
         ]);
     }
-
-
     
     #[Route('/reports/{id}', name: 'app_report_get', methods: ['GET'])]
     public function getReport(Report $report): JsonResponse
@@ -154,13 +152,57 @@ final class ReportController extends AbstractController{
             'message' => 'Report updated successfully',
             'id' => $report->getId()
         ]);
-    } catch (\Exception $e) {
-        return $this->json([
-            'success' => false,
-            'message' => $e->getMessage()
-        ], 400);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
+
+
+    #[Route('/reports/kanban', name: 'app_reports_kanban')]
+    public function kanban(ReportRepository $reportRepository): Response
+    {
+        // Get reports grouped by status
+        $newReports = $reportRepository->findBy(['responseStatus' => 'new'], ['creationDate' => 'DESC']);
+        $inProgressReports = $reportRepository->findBy(['responseStatus' => 'in_progress'], ['lastModifiedDate' => 'DESC']);
+        $resolvedReports = $reportRepository->findBy(['responseStatus' => 'resolved'], ['responseDate' => 'DESC']);
+        $closedReports = $reportRepository->findBy(['responseStatus' => 'closed'], ['responseDate' => 'DESC']);
+        
+        return $this->render('reports/kanban.html.twig', [
+            'newReports' => $newReports,
+            'inProgressReports' => $inProgressReports,
+            'resolvedReports' => $resolvedReports,
+            'closedReports' => $closedReports,
+        ]);
+    }
+    
+    #[Route('/reports/kanban/update-status/{id}', name: 'app_reports_kanban_update_status', methods: ['POST'])]
+public function updateReportStatus(Request $request, ReportRepository $reportRepository, int $id, EntityManagerInterface $entityManager): JsonResponse
+{
+    $report = $reportRepository->find($id);
+
+    if (!$report) {
+        return new JsonResponse(['error' => 'Report not found'], 404);
+    }
+
+    // Decode JSON data from request body
+    $data = json_decode($request->getContent(), true);
+
+    if (!isset($data['status'])) {
+        return new JsonResponse(['error' => 'Missing status'], 400);
+    }
+
+    // Update status and save changes
+    $report->setResponseStatus($data['status']);
+    $entityManager->persist($report);
+    $entityManager->flush();
+
+    return new JsonResponse(['message' => 'Status updated successfully'], 200);
 }
+
+
 
 
 }
