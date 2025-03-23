@@ -206,3 +206,4 @@ final class SignUpController extends AbstractController{
         return new Response('Agent and User deleted', Response::HTTP_OK);
     }
 }
+?>
