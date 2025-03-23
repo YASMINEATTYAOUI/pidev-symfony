@@ -23,7 +23,7 @@ final class SignUpController extends AbstractController{
 
 
 
-    #[Route('/api/signup', name: 'api_signup', methods: ['POST'])]
+    #[Route('/api/signup', name: 'api_signup')]
     public function signup(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
     {
         // Check if the request method is POST
@@ -38,9 +38,9 @@ final class SignUpController extends AbstractController{
 
             // Ensure the data contains the necessary fields
             if (!$username || !$password || !$fullName || !$email || !$cin || !$phoneNumber) {
-                return new Response('Invalid input', Response::HTTP_BAD_REQUEST);
+                $this->addFlash('error', 'Please fill in all the fields');
+                return $this->redirectToRoute('api_signup');
             }
-
             // Create a new user with hashed password
             $user = new User();
             $user->setUsername($username);
@@ -93,8 +93,12 @@ final class SignUpController extends AbstractController{
         $agentPhoneNumber = $request->request->get('agentPhoneNumber');
 
         // Ensure the data contains the necessary fields
-        if (!$username || !$password || !$agentFullName || !$agentEmail || !$agentPhoneNumber) {
-            return new Response('Invalid input', Response::HTTP_BAD_REQUEST);
+        if (!$username || !$password || !$fullName || !$email || !$cin || !$phoneNumber) {
+            $this->addFlash(
+                'error',
+                'Please fill in all the fields'
+            );
+            return $this->redirectToRoute('app_sign_up');
         }
 
         // Create a new agent
