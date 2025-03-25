@@ -52,6 +52,9 @@ class Citizen
 
 
 
+    
+
+
     public function getId(): ?int
     {
         return $this->id;

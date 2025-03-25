@@ -1,1 +1,6 @@
-{}
+{
+    "cline.timeout.connection": 300,
+    "cline.timeout.request": 180,
+    "cline.retry.count": 3,
+    "cline.retry.delay": 5
+}

@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Address;
 use App\Entity\Agent;
 use App\Entity\User;
 use App\Entity\Citizen;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,27 +28,78 @@ final class SignUpController extends AbstractController{
     #[Route('/api/signup', name: 'api_signup')]
     public function signup(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
     {
-        // Check if the request method is POST
+
         if ($request->isMethod('POST')) {
-            // Access form data
+            // Get all form data
             $username = $request->request->get('username');
             $password = $request->request->get('password');
+            $confirmPassword = $request->request->get('confirm-password');
             $fullName = $request->request->get('fullName');
             $email = $request->request->get('email');
             $cin = $request->request->get('cin');
             $phoneNumber = $request->request->get('phoneNumber');
-
-            // Ensure the data contains the necessary fields
-            if (!$username || !$password || !$fullName || !$email || !$cin || !$phoneNumber) {
-                $this->addFlash('error', 'Please fill in all the fields');
+            $latitude = $request->request->get('latitude');
+            $longitude = $request->request->get('longitude');
+            $profilePicture = $request->files->get('profilePicture');
+    
+            // Basic validation
+if (!$username || !$password || !$confirmPassword || !$fullName || !$email || !$cin || !$phoneNumber) {
+    $this->addFlash('error', 'Please fill in all the required fields');
+    return $this->redirectToRoute('api_signup');
+}
+            // Password confirmation check
+if ($password !== $confirmPassword) {
+    $this->addFlash('error', 'Passwords do not match');
+    return $this->redirectToRoute('api_signup');
+}
+            // CIN validation (8 digits starting with 0 or 1)
+if (!preg_match('/^[01]\d{7}$/', $cin)) {
+    $this->addFlash('error', 'CIN must be 8 digits starting with 0 or 1');
+    return $this->redirectToRoute('api_signup');
+}
+            // Phone number validation (8 digits)
+if (!preg_match('/^\d{8}$/', $phoneNumber)) {
+    $this->addFlash('error', 'Phone number must be 8 digits');
+    return $this->redirectToRoute('api_signup');
+}
+            // Check if the email or username already exists
+            $existingUser = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+            $existingCitizen = $em->getRepository(Citizen::class)->findOneBy(['email' => $email]);
+            $existingAgent = $em->getRepository(Agent::class)->findOneBy(['email' => $email]);
+            if ($existingUser) {
+                $this->addFlash('error', 'Username is already in use');
                 return $this->redirectToRoute('api_signup');
             }
+    
+            if ($existingAgent) {
+                $this->addFlash('error', 'Email is already in use');
+                return $this->redirectToRoute('api_signup');
+            }
+            if ($existingCitizen) {
+                $this->addFlash('error', 'Email is already in use');
+                return $this->redirectToRoute('api_signup');
+            }
+$imagePath = 'default.png';
+if ($profilePicture) {
+    $newFilename = uniqid('profile_', true) . '.' . $profilePicture->guessExtension();
+
+    try {
+        $profilePicture->move(
+            "/profile_pictures",
+            $newFilename
+        );
+        $imagePath = $newFilename;
+    } catch (FileException $e) {
+        $this->addFlash('error', 'Failed to upload profile picture: ' . $e->getMessage());
+        return $this->redirectToRoute('api_signup');
+    }
+}
             // Create a new user with hashed password
             $user = new User();
             $user->setUsername($username);
             $hashedPassword = $passwordHasher->hashPassword($user, $password);
             $user->setPassword($hashedPassword);
-
+    
             // Create a new citizen
             $citizen = new Citizen();
             $citizen->setFullName($fullName);
@@ -55,27 +108,34 @@ final class SignUpController extends AbstractController{
             $citizen->setPhoneNumber($phoneNumber);
             $citizen->setCreationDate(new \DateTime());
             $citizen->setLastModifiedDate(new \DateTime());
-            $citizen->setActiveStatus(true); // Assuming new citizens are active by default
+            $citizen->setActiveStatus(true);
             $citizen->setLevel(0);
             $citizen->setScore(0);
-            $citizen->setImagePath("not now");
+            $citizen->setImagePath($imagePath);
+            
+            // Set location if provided
 
+            if ($latitude && $longitude) {
+            $adress = new Address() ;
+            $adress->setLatitude($latitude);
+            $adress->setLongitude($longitude); 
+            $citizen->setAddress($adress);
+            $em->persist($adress);
+            }
+    
             // Associate the citizen with the user
             $user->setCitizen($citizen);
-
+    
             // Persist the user and citizen entities
             $em->persist($user);
             $em->persist($citizen);
             $em->flush();
-
-            // Redirect to login page after successful signup
-            return new RedirectResponse('/auth/login', Response::HTTP_SEE_OTHER);
+            
+            $this->addFlash('success', 'Registration successful! You can now login');
+            return $this->redirectToRoute('app_login');
         }
-
-        // Render the sign-up form if the request method is GET
-        return $this->render('auth/sign_up.html.twig', [
-            'controller_name' => 'SignUpController',
-        ]);
+    
+        return $this->render('auth/sign_up.html.twig');
     }
     
 
@@ -85,22 +145,32 @@ final class SignUpController extends AbstractController{
     #[Route('/api/create-agent', name: 'api_create_agent', methods: ['POST'])]
     public function createAgent(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
     {
-        // Access form data
         $username = $request->request->get('username');
         $password = $request->request->get('password');
         $agentFullName = $request->request->get('agentFullName');
         $agentEmail = $request->request->get('agentEmail');
         $agentPhoneNumber = $request->request->get('agentPhoneNumber');
-
-        // Ensure the data contains the necessary fields
-        if (!$username || !$password || !$fullName || !$email || !$cin || !$phoneNumber) {
-            $this->addFlash(
-                'error',
-                'Please fill in all the fields'
-            );
-            return $this->redirectToRoute('app_sign_up');
+    
+        if (!$username || !$password || !$agentFullName || !$agentEmail || !$agentPhoneNumber) {
+            $this->addFlash('error', 'Please fill in all the fields');
+            return $this->redirectToRoute('api_create_agent');
         }
-
+    
+        // Check if the email or username already exists
+        $existingAgent = $em->getRepository(Agent::class)->findOneBy(['email' => $agentEmail]);
+        $existingCitizen = $em->getRepository(Citizen::class)->findOneBy(['email' => $agentEmail]);
+        $existingUser = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+    
+        if ($existingAgent || $existingCitizen) {
+            $this->addFlash('error', 'Email is already in use.');
+            return $this->redirectToRoute('api_create_agent');
+        }
+    
+        if ($existingUser) {
+            $this->addFlash('error', 'Username is already in use.');
+            return $this->redirectToRoute('api_create_agent');
+        }
+    
         // Create a new agent
         $agent = new Agent();
         $agent->setFullName($agentFullName);
@@ -108,24 +178,24 @@ final class SignUpController extends AbstractController{
         $agent->setPhoneNumber($agentPhoneNumber);
         $agent->setCreationDate(new \DateTime());
         $agent->setActiveStatus(true);
-
+    
         // Persist the agent entity
         $em->persist($agent);
         $em->flush();
-
+    
         // Create a new user with hashed password
         $user = new User();
         $user->setUsername($username);
         $hashedPassword = $passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
         $user->setAgent($agent);
-
+    
         // Persist the user entity
         $em->persist($user);
         $em->flush();
-
+    
         return new Response('Agent and User created', Response::HTTP_CREATED);
-    }
+        }
 
 
 

@@ -4,48 +4,172 @@
 
 {% block body %}
 
-<section class="h-screen  bg-cover bg-center bg-no-repeat bg-custom"  >
+<section class="h-screen bg-cover bg-center bg-no-repeat bg-custom">
   <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
           <img class="w-8 h-8 mr-2" src="{{ asset('/images/logo.png') }}" alt="logo">
-          Harmonia    
+          Harmonia
       </a>
       <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                   Create an account
               </h1>
-              <form class="space-y-4 md:space-y-6" action="{{ path('api_signup') }}" method="POST">
-{% if app.flashes('error') is not empty %}
-    <div class="mb-4 px-4 py-3 leading-normal text-red-700 bg-red-100 rounded-lg" role="alert">
-        {{ dump(app.flashes('error')) }}
-    </div>
-{% endif %}
-
-
-                  <div>
-                      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                      <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
-                  </div>
-                  <div>
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                      <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
-                  </div>
-                  <div>
-                      <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
-                      <input type="password" name="confirm-password" id="confirm-password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
-                  </div>
-                  <div class="flex items-start">
-                      <div class="flex items-center h-5">
-                        <input id="terms" aria-describedby="terms" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="">
+              
+              <!-- Progress bar -->
+              <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 25%"></div>
+              </div>
+              
+              <!-- Step indicators -->
+              <div class="flex justify-between mb-4">
+                <div class="step-indicator active" data-step="1">Step 1</div>
+                <div class="step-indicator" data-step="2">Step 2</div>
+                <div class="step-indicator" data-step="3">Step 3</div>
+                <div class="step-indicator" data-step="4">Step 4</div>
+              </div>
+              
+              <form id="signup-form" class="space-y-4 md:space-y-6" action="{{ path('api_signup') }}" method="POST" enctype="multipart/form-data">
+                  {% if app.flashes('error') is not empty %}
+                      <div class="mb-4 px-4 py-3 leading-normal text-red-700 bg-red-100 rounded-lg" role="alert">
+                          {% for message in app.flashes('error') %}
+                              <div class="alert alert-danger">{{ message }}</div>
+                          {% endfor %}
                       </div>
-                      <div class="ml-3 text-sm">
-                        <label for="terms" class="font-light text-gray-500 dark:text-gray-300">I accept the <a class="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">Terms and Conditions</a></label>
+                  {% endif %}
+
+                  <!-- Step 1: Basic Information -->
+                  <div id="step-1" class="form-step">
+                      <div>
+                          <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                          <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter your username" required>
+                          <div id="username-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                      </div>
+
+                      <div>
+                          <label for="fullName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
+                          <input type="text" name="fullName" id="fullName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter your full name" required>
+                          <div id="fullName-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                      </div>
+
+                      <div>
+                          <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                          <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required>
+                          <div id="email-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                      </div>
+                      
+                      <div class="flex justify-end mt-6">
+                          <button type="button" id="next-step-1" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 border border-transparent rounded-lg focus:outline-none focus:shadow-outline-blue" style="background-color: #0000FF;">Next</button>
                       </div>
                   </div>
-                  <button type="submit" class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 border border-transparent rounded-lg focus:outline-none focus:shadow-outline-blue" style="background-color: #0000FF; hover:bg-[#000099]">Create an account</button>
+
+                  <!-- Step 2: Personal Information -->
+                  <div id="step-2" class="form-step hidden">
+                      <div>
+                          <label for="cin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">CIN</label>
+                          <input type="text" name="cin" id="cin" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter your CIN (8 digits starting with 0 or 1)" required>
+                          <div id="cin-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                      </div>
+
+                      <div>
+                          <label for="phoneNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number</label>
+                          <input type="text" name="phoneNumber" id="phoneNumber" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter your phone number (8 digits)" required>
+                          <div id="phoneNumber-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                      </div>
+
+                      <div>
+                          <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                          <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                          <div id="password-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                      </div>
+
+                      <div>
+                          <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
+                          <input type="password" name="confirm-password" id="confirm-password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                          <div id="confirm-password-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                      </div>
+                      
+                      <div class="flex justify-between mt-6">
+                          <button type="button" id="prev-step-2" class="px-4 py-2 text-sm font-medium leading-5 text-center text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg focus:outline-none">Previous</button>
+                          <button type="button" id="next-step-2" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 border border-transparent rounded-lg focus:outline-none focus:shadow-outline-blue" style="background-color: #0000FF;">Next</button>
+                      </div>
+                  </div>
+
+                  <!-- Step 3: Profile Picture -->
+                  <div id="step-3" class="form-step hidden">
+                      <h2 class="text-lg font-semibold mb-4">Profile Picture</h2>
+                      
+                      <div class="flex flex-col items-center justify-center">
+                          <div class="mb-4 relative">
+                              <img id="profile-preview" src="{{ asset('/images/default-profile.png') }}" alt="Profile Preview" class="w-32 h-32 rounded-full object-cover border-2 border-gray-300">
+                              <input type="file" name="profilePicture" id="profilePicture" accept="image/*" class="hidden">
+                              <button type="button" id="upload-btn" class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 focus:outline-none">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                                  </svg>
+                              </button>
+                          </div>
+                          <p class="text-sm text-gray-500 mb-4">Upload a clear photo of yourself</p>
+                          <div id="profile-error" class="text-red-500 text-sm mb-4 hidden"></div>
+                      </div>
+                      
+                      <div class="flex justify-between mt-6">
+                          <button type="button" id="prev-step-3" class="px-4 py-2 text-sm font-medium leading-5 text-center text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg focus:outline-none">Previous</button>
+                          <button type="button" id="next-step-3" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 border border-transparent rounded-lg focus:outline-none focus:shadow-outline-blue" style="background-color: #0000FF;">Next</button>
+                      </div>
+                  </div>
+
+                  <!-- Step 4: Review and Confirmation -->
+                  <div id="step-4" class="form-step hidden">
+                      <h2 class="text-lg font-semibold mb-4">Review Your Information</h2>
+                      
+                      <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                          <div class="flex items-center mb-4">
+                              <img id="review-profile-picture" src="{{ asset('/images/default-profile.png') }}" alt="Profile" class="w-16 h-16 rounded-full object-cover mr-4">
+                              <div>
+                                  <div class="font-medium text-lg" id="review-username"></div>
+                                  <div class="text-gray-600" id="review-email"></div>
+                              </div>
+                          </div>
+                          
+                          <div class="grid grid-cols-2 gap-2">
+                              <div class="font-medium">Full Name:</div>
+                              <div id="review-fullName"></div>
+                              
+                              <div class="font-medium">CIN:</div>
+                              <div id="review-cin"></div>
+                              
+                              <div class="font-medium">Phone Number:</div>
+                              <div id="review-phoneNumber"></div>
+                          </div>
+                      </div>
+                      
+                      <div class="mb-4">
+                          <div class="flex items-start">
+                              <div class="flex items-center h-5">
+                                <input id="terms" aria-describedby="terms" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required>
+                              </div>
+                              <div class="ml-3 text-sm">
+                                <label for="terms" class="font-light text-gray-500 dark:text-gray-300">I accept the <a class="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">Terms and Conditions</a></label>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      <div class="mb-4">
+                          <button type="button" id="location-permission" class="w-full px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 border border-transparent rounded-lg focus:outline-none focus:shadow-outline-blue bg-green-600 hover:bg-green-700">Allow Location Access</button>
+                          <div id="location-status" class="mt-2 text-sm text-gray-600"></div>
+                          <input type="hidden" name="latitude" id="latitude">
+                          <input type="hidden" name="longitude" id="longitude">
+                      </div>
+                      
+                      <div class="flex justify-between mt-6">
+                          <button type="button" id="prev-step-4" class="px-4 py-2 text-sm font-medium leading-5 text-center text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg focus:outline-none">Previous</button>
+                          <button type="submit" id="submit-form" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 border border-transparent rounded-lg focus:outline-none focus:shadow-outline-blue" style="background-color: #0000FF;">Create Account</button>
+                      </div>
+                  </div>
+                  
                   <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                      Already have an account? <a href="#" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</a>
+                      Already have an account? <a href="{{path('app_login')}}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</a>
                   </p>
               </form>
           </div>
@@ -53,5 +177,358 @@
   </div>
 </section>
 
-{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elements
+    const form = document.getElementById('signup-form');
+    const steps = document.querySelectorAll('.form-step');
+    const stepIndicators = document.querySelectorAll('.step-indicator');
+    const progressBar = document.getElementById('progress-bar');
+    
+    // Navigation buttons
+    const nextStep1 = document.getElementById('next-step-1');
+    const prevStep2 = document.getElementById('prev-step-2');
+    const nextStep2 = document.getElementById('next-step-2');
+    const prevStep3 = document.getElementById('prev-step-3');
+    const nextStep3 = document.getElementById('next-step-3');
+    const prevStep4 = document.getElementById('prev-step-4');
+    const submitForm = document.getElementById('submit-form');
+    const locationBtn = document.getElementById('location-permission');
+    
+    // Form fields
+    const usernameInput = document.getElementById('username');
+    const fullNameInput = document.getElementById('fullName');
+    const emailInput = document.getElementById('email');
+    const cinInput = document.getElementById('cin');
+    const phoneNumberInput = document.getElementById('phoneNumber');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const profilePictureInput = document.getElementById('profilePicture');
+    const uploadBtn = document.getElementById('upload-btn');
+    const profilePreview = document.getElementById('profile-preview');
+    const reviewProfilePicture = document.getElementById('review-profile-picture');
+    
+    // Error elements
+    const usernameError = document.getElementById('username-error');
+    const fullNameError = document.getElementById('fullName-error');
+    const emailError = document.getElementById('email-error');
+    const cinError = document.getElementById('cin-error');
+    const phoneNumberError = document.getElementById('phoneNumber-error');
+    const passwordError = document.getElementById('password-error');
+    const confirmPasswordError = document.getElementById('confirm-password-error');
+    const profileError = document.getElementById('profile-error');
+    
+    // Review elements
+    const reviewUsername = document.getElementById('review-username');
+    const reviewFullName = document.getElementById('review-fullName');
+    const reviewEmail = document.getElementById('review-email');
+    const reviewCin = document.getElementById('review-cin');
+    const reviewPhoneNumber = document.getElementById('review-phoneNumber');
+    
+    // Location elements
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+    const locationStatus = document.getElementById('location-status');
+    
+    // Current step
+    let currentStep = 1;
+    
+    // Function to show a specific step
+    function showStep(stepNumber) {
+        steps.forEach((step, index) => {
+            if (index + 1 === stepNumber) {
+                step.classList.remove('hidden');
+            } else {
+                step.classList.add('hidden');
+            }
+        });
+        
+        // Update step indicators
+        stepIndicators.forEach((indicator, index) => {
+            if (index + 1 === stepNumber) {
+                indicator.classList.add('active');
+            } else if (index + 1 < stepNumber) {
+                indicator.classList.add('completed');
+                indicator.classList.remove('active');
+            } else {
+                indicator.classList.remove('active', 'completed');
+            }
+        });
+        
+        // Update progress bar
+        const progressPercentage = ((stepNumber - 1) / (steps.length - 1)) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        currentStep = stepNumber;
+    }
+    
+    // Validation functions
+    function validateStep1() {
+        let isValid = true;
+        
+        // Validate username
+        if (!usernameInput.value.trim()) {
+            usernameError.textContent = 'Username is required';
+            usernameError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            usernameError.classList.add('hidden');
+        }
+        
+        // Validate full name
+        if (!fullNameInput.value.trim()) {
+            fullNameError.textContent = 'Full name is required';
+            fullNameError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            fullNameError.classList.add('hidden');
+        }
+        
+        // Validate email
+        if (!emailInput.value.trim()) {
+            emailError.textContent = 'Email is required';
+            emailError.classList.remove('hidden');
+            isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
+            emailError.textContent = 'Please enter a valid email address';
+            emailError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            emailError.classList.add('hidden');
+        }
+        
+        return isValid;
+    }
+    
+    function validateStep2() {
+        let isValid = true;
+        
+        // Validate CIN (8 digits starting with 0 or 1)
+        const cinValue = cinInput.value.trim();
+        if (!cinValue) {
+            cinError.textContent = 'CIN is required';
+            cinError.classList.remove('hidden');
+            isValid = false;
+        } else if (!/^[01]\d{7}$/.test(cinValue)) {
+            cinError.textContent = 'CIN must be 8 digits and start with 0 or 1';
+            cinError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            cinError.classList.add('hidden');
+        }
+        
+        // Validate phone number (8 digits)
+        const phoneValue = phoneNumberInput.value.trim();
+        if (!phoneValue) {
+            phoneNumberError.textContent = 'Phone number is required';
+            phoneNumberError.classList.remove('hidden');
+            isValid = false;
+        } else if (!/^\d{8}$/.test(phoneValue)) {
+            phoneNumberError.textContent = 'Phone number must be 8 digits';
+            phoneNumberError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            phoneNumberError.classList.add('hidden');
+        }
+        
+        // Validate password
+        if (!passwordInput.value) {
+            passwordError.textContent = 'Password is required';
+            passwordError.classList.remove('hidden');
+            isValid = false;
+        } else if (passwordInput.value.length < 6) {
+            passwordError.textContent = 'Password must be at least 6 characters';
+            passwordError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            passwordError.classList.add('hidden');
+        }
+        
+        // Validate confirm password
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordError.textContent = 'Passwords do not match';
+            confirmPasswordError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            confirmPasswordError.classList.add('hidden');
+        }
+        
+        return isValid;
+    }
+    
+    function validateStep3() {
+        // Profile picture is optional, so no validation needed unless you want to make it required
+        return true;
+    }
+    
+    // Update review information
+    function updateReviewInfo() {
+        reviewUsername.textContent = usernameInput.value;
+        reviewFullName.textContent = fullNameInput.value;
+        reviewEmail.textContent = emailInput.value;
+        reviewCin.textContent = cinInput.value;
+        reviewPhoneNumber.textContent = phoneNumberInput.value;
+        
+        // Update profile picture in review if one was selected
+        if (profilePictureInput.files && profilePictureInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                reviewProfilePicture.src = e.target.result;
+            };
+            reader.readAsDataURL(profilePictureInput.files[0]);
+        }
+    }
+    
+    // Event listeners for navigation
+    nextStep1.addEventListener('click', function() {
+        if (validateStep1()) {
+            showStep(2);
+        }
+    });
+    
+    prevStep2.addEventListener('click', function() {
+        showStep(1);
+    });
+    
+    nextStep2.addEventListener('click', function() {
+        if (validateStep2()) {
+            showStep(3);
+        }
+    });
+    
+    prevStep3.addEventListener('click', function() {
+        showStep(2);
+    });
+    
+    nextStep3.addEventListener('click', function() {
+        if (validateStep3()) {
+            updateReviewInfo();
+            showStep(4);
+        }
+    });
+    
+    prevStep4.addEventListener('click', function() {
+        showStep(3);
+    });
+    
+    // Profile picture upload
+    uploadBtn.addEventListener('click', function() {
+        profilePictureInput.click();
+    });
+    
+    profilePictureInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {            
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(this.files[0].type)) {
+                profileError.textContent = 'Only JPEG, PNG, and GIF images are allowed';
+                profileError.classList.remove('hidden');
+                return;
+            }
+            
+            profileError.classList.add('hidden');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profilePreview.src = e.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+    
+    // Location permission
+    locationBtn.addEventListener('click', function() {
+        if (navigator.geolocation) {
+            locationStatus.textContent = 'Requesting location access...';
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    latitudeInput.value = position.coords.latitude;
+                    longitudeInput.value = position.coords.longitude;
+                    locationStatus.textContent = 'Location access granted!';
+                    locationStatus.classList.add('text-green-600');
+                    locationBtn.textContent = 'Location Access Granted';
+                    locationBtn.disabled = true;
+                    locationBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    locationBtn.classList.add('bg-gray-400');
+                },
+                function(error) {
+                    console.error('Error getting location:', error);
+                    locationStatus.textContent = 'Error getting location. Please try again.';
+                    locationStatus.classList.add('text-red-600');
+                }
+            );
+        } else {
+            locationStatus.textContent = 'Geolocation is not supported by your browser.';
+            locationStatus.classList.add('text-red-600');
+        }
+    });
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
+        // Validate terms acceptance
+        const termsCheckbox = document.getElementById('terms');
+        if (!termsCheckbox.checked) {
+            alert('Please accept the Terms and Conditions');
+            return;
+        }
+
+        // Validate location data
+        if (!latitudeInput.value || !longitudeInput.value) {
+            alert('Please grant location access to complete registration');
+            return;
+        }
+
+        // Prepare form data
+        const formData = new FormData(form);
+        
+        // Add CSRF token if needed
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (csrfToken) {
+            formData.append('_token', csrfToken);
+        }
+
+        // Send AJAX request
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.redirected) {
+             //   window.location.href = response.url;
+             console.log("redirect response")
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.error) {
+                // Handle server-side validation errors
+                if (data.errors) {
+                    // You can implement more specific error handling here
+                    alert(Object.values(data.errors).join('\n'));
+                } else {
+                    alert(data.error);
+                }
+            } else if (data && data.success) {
+                // Successful registration
+                console.log("successful data")
+               window.location.href = data.redirectUrl || '/auth/login';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during registration. Please try again.');
+        });
+    });
+
+    // Initialize the form
+    showStep(1);
+});
+</script>
+
+{% endblock %}
