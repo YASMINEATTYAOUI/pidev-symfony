@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class AgentController extends AbstractController
 {
@@ -94,6 +95,25 @@ class AgentController extends AbstractController
             $this->addFlash('success', 'Agent updated successfully.');
             return $this->redirectToRoute('agent_list');
         }
+    }
+
+    #[Route('/agents/authenticated-agent', name: 'agent_authenticated_agent')]
+    public function getAuthenticatedAgent(Security $security, AgentRepository $agentRepository)
+    {
+        $user = $security->getUser();
+
+        if (!$user) {
+            return new Response('No authenticated user found.');
+        }
+
+        $agent = $user->getAgent(); // Assuming getAgent() exists in User entity
+
+        if (!$agent) {
+            return new Response('No associated agent found for the authenticated user.');
+        }
+
+        $agent->username = $user->getUsername();
+        return $this->json($agent);
     }
 
     #[Route('/agents', name: 'agent_list')]

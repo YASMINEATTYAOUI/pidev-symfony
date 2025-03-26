@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Request;
 
 class CitizenController extends AbstractController
@@ -27,6 +28,24 @@ class CitizenController extends AbstractController
 
         $this->addFlash('success', 'Citizen status updated successfully.');
         return $this->redirectToRoute('citizen_list');
+    }
+
+    #[Route('/citizens/authenticated-citizen', name: 'citizen_authenticated_citizen')]
+    public function getAuthenticatedCitizen(Security $security  , CitizenRepository $citizenRepository)
+    {
+        $user = $security->getUser();
+
+        if (!$user) {
+            return new Response('No authenticated user found.');
+        }
+
+        $citizen = $user->getCitizen(); // Assuming getCitizenId() exists in User entity
+
+        if (!$citizen) {
+            return new Response('No associated citizen found for the authenticated user.');
+        }
+        $citizen->username = $user->getUsername();
+        return $this->json($citizen);
     }
 
     #[Route('/citizens', name: 'citizen_list')]
