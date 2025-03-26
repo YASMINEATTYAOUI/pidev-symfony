@@ -21,5 +21,18 @@ class AgentRepository extends ServiceEntityRepository
         parent::__construct($registry, Agent::class);
     }
 
-    // Add custom query methods here
+    /**
+     * Find agents by search term (username or full name).
+     */
+    public function findBySearch(string $search): array
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        if (!empty($search)) {
+            $qb->where('a.username LIKE :search OR a.fullName LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

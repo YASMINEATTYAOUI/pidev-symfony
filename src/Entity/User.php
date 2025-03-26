@@ -15,7 +15,7 @@ class User implements UserInterface , PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "bigint")]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(name: 'reset_token', type: 'string', length: 255, nullable: true)]
     private ?string $resetToken = null;
 
     #[ORM\Column(type: "string", length: 100, unique: true)]
@@ -28,8 +28,7 @@ class User implements UserInterface , PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(name: "citizen_id", referencedColumnName: "id", nullable: true)]
     private ?Citizen $citizen = null;
 
-    #[ORM\OneToOne(targetEntity: Admin::class, cascade: ["persist", "remove"])]
-    #[ORM\JoinColumn(name: "admin_id", referencedColumnName: "id", nullable: true)]
+#[ORM\OneToOne(mappedBy: "user", targetEntity: Admin::class, cascade: ["persist", "remove"])]
     private ?Admin $admin = null;
 
     #[ORM\OneToOne(targetEntity: Agent::class, cascade: ["persist", "remove"])]

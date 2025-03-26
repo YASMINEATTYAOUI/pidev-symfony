@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Agent List{% endblock %}
+
+{% block body %}
+<h1 class="text-2xl font-bold mb-4">Agent Users</h1>
+
+<form method="get" action="{{ path('agent_list') }}" class="mb-4">
+    <input type="text" name="search" placeholder="Search by username or full name" value="{{ search }}" class="border rounded px-4 py-2">
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Search</button>
+</form>
+
+<table class="table-auto w-full border-collapse border border-gray-300">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="border border-gray-300 px-4 py-2">ID</th>
+            <th class="border border-gray-300 px-4 py-2">Username</th>
+            <th class="border border-gray-300 px-4 py-2">Full Name</th>
+            <th class="border border-gray-300 px-4 py-2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agent in agents %}
+            <tr class="hover:bg-gray-50">
+                <td class="border border-gray-300 px-4 py-2">{{ agent.id }}</td>
+                <td class="border border-gray-300 px-4 py-2">{{ agent.username }}</td>
+                <td class="border border-gray-300 px-4 py-2">{{ agent.fullName }}</td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <a href="{{ path('api_update_agent', { id: agent.id }) }}" class="text-blue-500 hover:underline">Update</a>
+                    <a href="{{ path('agent_delete', { id: agent.id }) }}" class="text-red-500 hover:underline" onclick="return confirm('Are you sure?');">Delete</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" class="text-center py-4">No agents found.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
