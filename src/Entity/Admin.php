@@ -16,6 +16,13 @@ class Admin
     #[ORM\Column(type: "bigint")]
     private $id;
 
+    #[ORM\OneToOne(inversedBy: "admin", targetEntity: User::class, cascade: ["persist", "remove"])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+
+
+    
     // Getter for id
     public function getId(): ?int
     {
