@@ -1,8 +1,9 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -37,9 +38,15 @@ class Post
     #[ORM\JoinColumn(name: "citizen_id", referencedColumnName: "id")]
     private ?Citizen $citizen = null;
 
-    // Getters and setters...
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: "post")]
+    private Collection $comments;
 
-    public function getId(): ?string
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+    }
+
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -52,7 +59,6 @@ class Post
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -64,7 +70,6 @@ class Post
     public function setContent(?string $content): static
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -76,7 +81,6 @@ class Post
     public function setFileUrl(?string $fileUrl): static
     {
         $this->fileUrl = $fileUrl;
-
         return $this;
     }
 
@@ -88,7 +92,6 @@ class Post
     public function setTags(?string $tags): static
     {
         $this->tags = $tags;
-
         return $this;
     }
 
@@ -100,7 +103,6 @@ class Post
     public function setCreationDate(\DateTimeInterface $creationDate): static
     {
         $this->creationDate = $creationDate;
-
         return $this;
     }
 
@@ -112,7 +114,6 @@ class Post
     public function setLastModifiedDate(\DateTimeInterface $lastModifiedDate): static
     {
         $this->lastModifiedDate = $lastModifiedDate;
-
         return $this;
     }
 
@@ -124,7 +125,30 @@ class Post
     public function setCitizen(?Citizen $citizen): static
     {
         $this->citizen = $citizen;
+        return $this;
+    }
 
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setPost($this);
+        }
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            if ($comment->getPost() === $this) {
+                $comment->setPost(null);
+            }
+        }
         return $this;
     }
 }
