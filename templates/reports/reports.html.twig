@@ -1,114 +1,155 @@
 {% extends 'index.html.twig' %}
 
-{% block title %}Reports Management{% endblock %}
+{% block title %}Reports Management
+{% endblock %}
 
 {% block centent %}
 
-<div class="antialiased bg-gray-50 dark:bg-gray-900">
-    <div class="container mx-auto px-4 py-6">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Reports Management</h1>
-            <div class="flex items-center gap-2">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
-                    </div>
-                    <input type="search" id="search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-64 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" required>
-                </div>
-                <button type="button" class="p-2.5 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                    </svg>
-                </button>
-                {# href="{{ path('reports_kanban') }}" #}
-                <a  class="text-white bg-black hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700">Kanban View</a>
-            </div>
-        </div>
+	<div class="antialiased bg-gray-50 dark:bg-gray-900">
+		<div class="container mx-auto px-4 py-6">
+			<div class="flex justify-between items-center mb-6">
+				<h1 class="text-3xl font-bold text-gray-800 dark:text-white">Reports Management</h1>
+				<div class="flex items-center gap-2">
+					<div class="relative">
+						<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+							<svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 20 20">
+								<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+							</svg>
+						</div>
+						<input type="search" id="search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-64 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" required>
+					</div>
+					<button type="button" class="p-2.5 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+						</svg>
+					</button>
+					<a href="{{ path('app_reports_kanban') }}" class="text-white bg-black hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700">Kanban View</a>
+				</div>
+			</div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {# Report app Bug card #}
-            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Report app Bug</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">By Aziz Hamzaoui</p>
-                    </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">26 Feb 2025</span>
-                </div>
-                <div class="mb-4">
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">App Bug</span>
-                </div>
-                <p class="text-gray-700 mb-4 dark:text-gray-300">
-                    When a user attempts to submit a report that includes an image attachment, the app crashes immediately after tapping the "Submit" button. This issue occurs on both Android and iOS devices.
-                </p>
-                <div class="flex justify-end">
-                    <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">CLOSED</span>
-                </div>
-            </div>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				{% for report in reports %}
+					<div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" onclick="openUpdateModal({{ report.id }})">
+						<div class="flex justify-between items-start mb-4">
+							<div>
+								<h2 class="text-xl font-semibold text-gray-800 dark:text-white">{{ report.title }}</h2>
+								<p class="text-sm text-gray-600 dark:text-gray-400">By
+									{{ report.citizen ? report.citizen.fullName  }}</p>
+							</div>
+							<span class="text-sm text-gray-500 dark:text-gray-400">{{ report.creationDate|date('d M Y') }}</span>
+						</div>
+						<div class="mb-4">
+							{% set typeClass = report.reportType and typeColors[report.reportType] 
+                        ? typeColors[report.reportType].bg ~ ' ' ~ typeColors[report.reportType].text 
+                        : typeColors['DEFAULT'].bg ~ ' ' ~ typeColors['DEFAULT'].text %}
+							<span class="{{ typeClass }} text-xs font-medium px-2.5 py-0.5 rounded">{{ report.reportType ?: 'Unspecified' }}</span>
+						</div>
+						<div class="text-gray-700 mb-4 dark:text-gray-300 break-words whitespace-pre-line">
+							{{ report.description }}
+						</div>
 
-            {# Large Pothole on main road card #}
-            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Large Pothole on main road</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">By souha</p>
-                    </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">20 Feb 2025</span>
-                </div>
-                <div class="mb-4">
-                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Security Concern</span>
-                </div>
-                <p class="text-gray-700 mb-4 dark:text-gray-300">
-                    A deep pothole has formed on Main Street near the intersection with 5th Avenue. It's causing damage to cars.
-                </p>
-                <div class="flex justify-end">
-                    <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">CLOSED</span>
-                </div>
-            </div>
+						<div class="flex justify-end">
+							{% set statusClass = statusColors[report.responseStatus] is defined 
+                                                ? statusColors[report.responseStatus].bg ~ ' ' ~ statusColors[report.responseStatus].text 
+                                                : statusColors['DEFAULT'].bg ~ ' ' ~ statusColors['DEFAULT'].text %}
+							<span class="{{ statusClass }} text-xs font-medium px-2.5 py-0.5 rounded">
+								{{ report.responseStatus ?: 'UNKNOWN' }}
+							</span>
+						</div>
 
-            {# Garbage Bins Overflowing card #}
-            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Garbage Bins Overflowing</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">By souha</p>
-                    </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">20 Feb 2025</span>
-                </div>
-                <div class="mb-4">
-                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Other</span>
-                </div>
-                <p class="text-gray-700 mb-4 dark:text-gray-300">
-                    The public trash bins in Central Park are full, and people are leaving garbage on the ground.
-                </p>
-                <div class="flex justify-end">
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">PENDING</span>
-                </div>
-            </div>
+					</div>
+				{% else %}
+					<div class="col-span-2 bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+						<p class="text-gray-700 dark:text-gray-300 text-center">No reports found.</p>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 
-            {# Graffiti on City Hall Walls card #}
-            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Graffiti on City Hall Walls</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">By souha</p>
-                    </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">20 Feb 2025</span>
-                </div>
-                <div class="mb-4">
-                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Other</span>
-                </div>
-                <p class="text-gray-700 mb-4 dark:text-gray-300">
-                    Someone has sprayed graffiti on the front entrance of City Hall. It needs to be cleaned as soon as possible.
-                </p>
-                <div class="flex justify-end">
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">PENDING</span>
-                </div>
-            </div>
-        </div>
-    </div>
+
+	<!-- Update Modal -->
+	<div id="updateReportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
+			<div class="flex justify-between items-center mb-4">
+				<h3 class="text-xl font-semibold text-gray-900 dark:text-white">Update Report</h3>
+				<button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white" onclick="closeUpdateModal()">
+					<svg class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+					</svg>
+				</button>
+			</div>
+			<form id="updateReportForm" method="POST">
+				<input type="hidden" id="reportId" name="reportId">
+				<div class="mb-4">
+					<label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
+					<input type="text" id="title" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+				</div>
+				<div class="mb-4">
+					<label for="reportType" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Report Type</label>
+					<select id="reportType" name="reportType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+						<option value="Community">Community</option>
+						<option value="Environmental">Environmental</option>
+                        <option value="Infrastructure">Infrastructure</option>
+						<option value="Public Safety">Public Safety</option>
+                        <option value="Security Concern">Security Concern</option>
+						<option value="Other">Other</option>
+					</select>
+				</div>
+				<div class="mb-4">
+					<label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+					<textarea id="description" name="description" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+				</div>
+				<div class="flex justify-end space-x-2">
+					<button type="button" onclick="closeUpdateModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-4 focus:ring-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+					<button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update Report</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+window.openUpdateModal = function (reportId) {
+fetch (`/reports/${reportId}`).then(response => response.json()).then(data => {
+document.getElementById('reportId').value = data.id;
+document.getElementById('title').value = data.title;
+document.getElementById('reportType').value = data.reportType;
+document.getElementById('description').value = data.description;
 
-{% endblock %}
+document.getElementById('updateReportModal').classList.remove('hidden');
+}).catch(error => console.error('Error fetching report:', error));
+};
+
+window.closeUpdateModal = function () {
+document.getElementById('updateReportModal').classList.add('hidden');
+};
+
+document.getElementById('updateReportForm').addEventListener('submit', function (e) {
+e.preventDefault();
+
+const reportId = document.getElementById('reportId').value;
+const formData = {
+title: document.getElementById('title').value,
+reportType: document.getElementById('reportType').value,
+description: document.getElementById('description').value
+};
+
+fetch (`/reports/${reportId}/update`, {
+method: 'PUT',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(formData)
+}).then(response => response.json()).then(data => {
+if (data.success) {
+closeUpdateModal();
+window.location.reload();
+} else {
+alert('Error updating report: ' + data.message);
+}
+}).catch(error => console.error('Error updating report:', error));
+});
+
+});
+</script>{% endblock %}

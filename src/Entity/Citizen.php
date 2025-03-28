@@ -49,6 +49,12 @@ class Citizen
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $imagePath = null;
 
+
+
+
+    
+
+
     public function getId(): ?int
     {
         return $this->id;

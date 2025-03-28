@@ -6,8 +6,11 @@ use App\Repository\AgentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+
+
 #[ORM\Entity(repositoryClass: AgentRepository::class)]
 #[ORM\Table(name: "agent")]
+
 class Agent
 {
     #[ORM\Id]
@@ -29,6 +32,11 @@ class Agent
 
     #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $activeStatus = null;
+
+
+
+
+
 
     public function getId(): ?int
     {
